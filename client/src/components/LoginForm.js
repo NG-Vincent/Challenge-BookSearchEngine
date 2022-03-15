@@ -9,7 +9,7 @@ import { LOGIN_USER } from "../utils/mutations";
 
 const LoginForm = () => {
    // grapql mutation
-   const [login, { error }] = useMutation(LOGIN_USER);
+   const [login] = useMutation(LOGIN_USER);
 
    const [userFormData, setUserFormData] = useState({
       email: "",
@@ -33,11 +33,14 @@ const LoginForm = () => {
          event.stopPropagation();
       }
 
+      // use try/catch to prevent errors from exiting the function
       try {
+         // send mutation using data from forms
          const { data } = await login({
             variables: { ...userFormData },
          });
 
+         // log in then save token
          Auth.login(data.login.token);
       } catch (err) {
          console.error(err);
