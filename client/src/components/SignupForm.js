@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
 
-import { createUser } from "../utils/API";
 import Auth from "../utils/auth";
 
 // graphql mutations
@@ -21,7 +20,7 @@ const SignupForm = () => {
    const [showAlert, setShowAlert] = useState(false);
 
    // graphql mutations
-   const [addUser, { error }] = useMutation(ADD_USER);
+   const [addUser] = useMutation(ADD_USER);
 
    const handleInputChange = (event) => {
       const { name, value } = event.target;
@@ -38,11 +37,14 @@ const SignupForm = () => {
          event.stopPropagation();
       }
 
+      // use try/catch to prevent errors from exiting the function
       try {
+         // send mutation using data from forms
          const { data } = await addUser({
             variables: { ...userFormData },
          });
 
+         // automatically log in then save token
          Auth.login(data.addUser.token);
       } catch (err) {
          console.error(err);
