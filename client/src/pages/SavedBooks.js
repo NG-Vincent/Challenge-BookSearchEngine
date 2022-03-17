@@ -34,12 +34,17 @@ const SavedBooks = () => {
          console.error(err);
       }
    };
+   console.log(userData);
 
    return (
       <>
-         {/* if data isn't here yet, say so */}
+         {/* if data isn't loaded yet, say so */}
+         {/* else if not logged in, say so */}
+         {/* else display data */}
          {loading ? (
             <h2>Loading...</h2>
+         ) : !userData ? (
+            <h2>You must be logged in to view your saved books!</h2>
          ) : (
             <>
                {/* display components when finished loading */}
@@ -60,7 +65,7 @@ const SavedBooks = () => {
                         : "You have no saved books!"}
                   </h2>
                   <CardColumns>
-                     {userData.me.savedBooks.map((book) => {
+                     {userData.me.savedBooks.map((book, i) => {
                         return (
                            <Card key={book.bookId} border="dark">
                               {book.image ? (
