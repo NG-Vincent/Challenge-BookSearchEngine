@@ -55,6 +55,21 @@ const resolvers = {
             return bookData;
          }
       },
+      removeBook: async (parent, args, context) => {
+         // if logged in
+         if (context.user) {
+            // find user by id
+            const bookData = await User.findOneAndUpdate(
+               { _id: context.user._id },
+               // then remove book from array by matching the book id
+               { $pull: { savedBooks: { bookId: args.bookId } } },
+               // return new data
+               { new: true }
+            );
+
+            return bookData;
+         }
+      },
    },
 };
 

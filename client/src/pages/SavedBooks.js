@@ -12,32 +12,29 @@ import Auth from "../utils/auth";
 import { removeBookId } from "../utils/localStorage";
 
 // graphql
-import { useQuery } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import { QUERY_ME } from "../utils/queries";
+import { REMOVE_BOOK } from "../utils/mutations";
 
 const SavedBooks = () => {
    // graphql
    // rename "data" from useQuery to userData
    const { loading, data: userData } = useQuery(QUERY_ME);
+   const [removeBook] = useMutation(REMOVE_BOOK);
 
-   // create function that accepts the book's mongo _id value as param and deletes the book from the database
-   const handleDeleteBook = async (bookId) => {
-      // const token = Auth.loggedIn() ? Auth.getToken() : null;
-      // if (!token) {
-      //    return false;
-      // }
-      // try {
-      //    const response = await deleteBook(bookId, token);
-      //    if (!response.ok) {
-      //       throw new Error("something went wrong!");
-      //    }
-      //    const updatedUser = await response.json();
-      //    setUserData(updatedUser);
-      //    // upon success, remove book's id from localStorage
-      //    removeBookId(bookId);
-      // } catch (err) {
-      //    console.error(err);
-      // }
+   // create method to remove saved book
+   const handleRemoveBook = async (bookId) => {
+      try {
+         // remove book
+         await removeBook({
+            variables: { bookId },
+         });
+
+         // upon success, remove book's id from localStorage
+         removeBookId(bookId);
+      } catch (err) {
+         console.error(err);
+      }
    };
 
    return (
@@ -47,6 +44,7 @@ const SavedBooks = () => {
             <h2>Loading...</h2>
          ) : (
             <>
+               {/* display components when finished loading */}
                <Jumbotron fluid className="text-light bg-dark">
                   <Container>
                      <h1>Viewing saved books!</h1>
@@ -83,7 +81,7 @@ const SavedBooks = () => {
                                  <Button
                                     className="btn-block btn-danger"
                                     onClick={() =>
-                                       handleDeleteBook(book.bookId)
+                                       handleRemoveBook(book.bookId)
                                     }
                                  >
                                     Delete this Book!
